@@ -1,0 +1,43 @@
+.trades-page {
+  padding: 28px 32px;
+}
+
+.positive { color: var(--accent-green); }
+.negative { color: var(--accent-red); }
+
+.trades-table-wrap {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.trade-row:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.trade-symbol {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* Reuse btn classes */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--accent-green); color: #fff; }
+.btn-primary:hover { background: #34a046; }
+.btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
