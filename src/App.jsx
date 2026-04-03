@@ -10,6 +10,7 @@ import NewTrade from './pages/NewTrade.jsx'
 import Community from './pages/Community.jsx'
 import Search from './pages/Search.jsx'
 import ImportTrades from './pages/ImportTrades.jsx'
+import Charts from './pages/Charts.jsx'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="community" element={<Community />} />
           <Route path="search" element={<Search />} />
           <Route path="import" element={<ImportTrades />} />
+          <Route path="charts" element={<Charts />} />
         </Route>
       </Routes>
     </BrowserRouter>

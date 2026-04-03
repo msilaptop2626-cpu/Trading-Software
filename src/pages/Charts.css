@@ -1,0 +1,33 @@
+.charts-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.charts-header {
+  padding: 16px 20px 8px;
+  border-bottom: 1px solid #2a2d3e;
+  background: #0d0f1a;
+}
+
+.charts-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e1e4ef;
+  margin: 0 0 2px;
+}
+
+.charts-subtitle {
+  font-size: 12px;
+  color: #565f73;
+  margin: 0;
+}
+
+.charts-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
