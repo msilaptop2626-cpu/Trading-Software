@@ -3,15 +3,23 @@ import { NavLink, useNavigate } from 'react-router-dom'
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: HomeIcon },
-  { path: '/calendar', label: 'Calendar', icon: CalendarIcon },
-  { path: '/reports', label: 'Reports', icon: ReportsIcon },
-  { path: '/trades', label: 'Trades', icon: TradesIcon },
-  { path: '/journal', label: 'Journal', icon: JournalIcon },
+  { path: '/charts',    label: 'Charts',    icon: ChartIcon },
+  { path: '/calendar',  label: 'Calendar',  icon: CalendarIcon },
+  { path: '/reports',   label: 'Reports',   icon: ReportsIcon },
+  { path: '/trades',    label: 'Trades',    icon: TradesIcon },
+  { path: '/journal',   label: 'Journal',   icon: JournalIcon },
   { path: '/new-trade', label: 'New Trade', icon: NewTradeIcon },
   { path: '/community', label: 'Community', icon: CommunityIcon },
-  { path: '/search', label: 'Search', icon: SearchIcon },
+  { path: '/search',    label: 'Search',    icon: SearchIcon },
 ]
 
+function ChartIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="3 9 9 9 12 3 15 15 18 9 21 9"/>
+    </svg>
+  )
+}
 function HomeIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
