@@ -1,19 +1,27 @@
 /**
  * PriceChart — candlestick chart with overlay series.
  *
- * Uses @tradingview/lightweight-charts v4 IChartApi.
+ * lightweight-charts v4 API:
+ *   chart.addSeries(CandlestickSeries, opts)  ← NOT addCandlestickSeries()
+ *   chart.addSeries(LineSeries, opts)          ← NOT addLineSeries()
  *
  * Overlay colours:
  *   EMA 9   → #f0c35a  (gold)
  *   EMA 20  → #4e9ff2  (blue)
  *   EMA 50  → #e05fac  (pink)
  *   SMA 200 → #9b59b6  (purple)
- *   BB upper/lower → #3d8ebb dashed
+ *   BB bands → #3d8ebb dashed
  *   VWAP    → #26c2a4  (teal)
  */
 
 import { useEffect, useRef } from 'react';
-import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
+import {
+  createChart,
+  CrosshairMode,
+  LineStyle,
+  CandlestickSeries,
+  LineSeries,
+} from 'lightweight-charts';
 import { useChartStore } from '../../store/chartStore';
 import { useIndicators } from '../../hooks/useIndicators';
 
@@ -29,28 +37,30 @@ const CHART_OPTS = {
   crosshair: { mode: CrosshairMode.Normal },
   rightPriceScale: { borderColor: '#2a2d3e' },
   timeScale: {
-    borderColor:     '#2a2d3e',
-    timeVisible:     true,
-    secondsVisible:  false,
+    borderColor:    '#2a2d3e',
+    timeVisible:    true,
+    secondsVisible: false,
   },
 };
 
 const CANDLE_OPTS = {
-  upColor:          '#26a69a',
-  downColor:        '#ef5350',
-  borderUpColor:    '#26a69a',
-  borderDownColor:  '#ef5350',
-  wickUpColor:      '#26a69a',
-  wickDownColor:    '#ef5350',
+  upColor:         '#26a69a',
+  downColor:       '#ef5350',
+  borderUpColor:   '#26a69a',
+  borderDownColor: '#ef5350',
+  wickUpColor:     '#26a69a',
+  wickDownColor:   '#ef5350',
 };
+
+const LINE_BASE = { lineWidth: 1, lastValueVisible: false, priceLineVisible: false };
 
 export default function PriceChart({ height = 420 }) {
   const containerRef = useRef(null);
   const chartRef     = useRef(null);
-  const seriesRef    = useRef({});   // named series refs for update-in-place
+  const seriesRef    = useRef({});
 
-  const { candles, overlays } = useChartStore();
-  const indicators = useIndicators();
+  const { candles } = useChartStore();
+  const indicators  = useIndicators();
 
   // ── Create chart once ────────────────────────────────────────────
   useEffect(() => {
@@ -62,24 +72,23 @@ export default function PriceChart({ height = 420 }) {
       height,
     });
 
-    // Candlestick
-    seriesRef.current.candles = chart.addCandlestickSeries(CANDLE_OPTS);
+    // v4: addSeries(SeriesTypeConstructor, options)
+    seriesRef.current.candles  = chart.addSeries(CandlestickSeries, CANDLE_OPTS);
 
-    // Overlays (created once, data set later)
-    seriesRef.current.ema9   = chart.addLineSeries({ color: '#f0c35a', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.ema20  = chart.addLineSeries({ color: '#4e9ff2', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.ema50  = chart.addLineSeries({ color: '#e05fac', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.sma200 = chart.addLineSeries({ color: '#9b59b6', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.bbUpper  = chart.addLineSeries({ color: '#3d8ebb', lineWidth: 1, lineStyle: LineStyle.Dashed, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.bbMiddle = chart.addLineSeries({ color: '#3d8ebb', lineWidth: 1, lineStyle: LineStyle.Dotted, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.bbLower  = chart.addLineSeries({ color: '#3d8ebb', lineWidth: 1, lineStyle: LineStyle.Dashed, lastValueVisible: false, priceLineVisible: false });
-    seriesRef.current.vwap   = chart.addLineSeries({ color: '#26c2a4', lineWidth: 1, lineStyle: LineStyle.Dotted, lastValueVisible: false, priceLineVisible: false });
+    seriesRef.current.ema9     = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#f0c35a' });
+    seriesRef.current.ema20    = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#4e9ff2' });
+    seriesRef.current.ema50    = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#e05fac' });
+    seriesRef.current.sma200   = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#9b59b6' });
+    seriesRef.current.bbUpper  = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#3d8ebb', lineStyle: LineStyle.Dashed });
+    seriesRef.current.bbMiddle = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#3d8ebb', lineStyle: LineStyle.Dotted });
+    seriesRef.current.bbLower  = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#3d8ebb', lineStyle: LineStyle.Dashed });
+    seriesRef.current.vwap     = chart.addSeries(LineSeries, { ...LINE_BASE, color: '#26c2a4', lineStyle: LineStyle.Dotted });
 
     chartRef.current = chart;
 
-    // Responsive resize
     const ro = new ResizeObserver(() => {
-      chart.applyOptions({ width: containerRef.current.clientWidth });
+      if (containerRef.current)
+        chart.applyOptions({ width: containerRef.current.clientWidth });
     });
     ro.observe(containerRef.current);
 

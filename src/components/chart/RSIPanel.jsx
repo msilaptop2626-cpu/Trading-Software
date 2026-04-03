@@ -1,10 +1,10 @@
 /**
- * RSIPanel — RSI line chart with overbought/oversold reference lines.
- * Rendered only when panels.rsi is true.
+ * RSIPanel — RSI line with 70/30 reference lines.
+ * lightweight-charts v4: addSeries(LineSeries, opts)
  */
 
 import { useEffect, useRef } from 'react';
-import { createChart, LineStyle } from 'lightweight-charts';
+import { createChart, LineStyle, LineSeries } from 'lightweight-charts';
 import { useIndicators } from '../../hooks/useIndicators';
 
 const CHART_OPTS = {
@@ -46,15 +46,14 @@ export default function RSIPanel({ height = 100 }) {
       height,
     });
 
-    // RSI line
-    rsiSeriesRef.current = chart.addLineSeries({
+    // v4: addSeries(LineSeries, opts)
+    rsiSeriesRef.current = chart.addSeries(LineSeries, {
       color:            '#b388ff',
       lineWidth:        2,
       priceLineVisible: false,
       lastValueVisible: true,
     });
 
-    // Fix scale 0–100
     rsiSeriesRef.current.applyOptions({
       autoscaleInfoProvider: () => ({
         priceRange: { minValue: 0, maxValue: 100 },
@@ -62,7 +61,6 @@ export default function RSIPanel({ height = 100 }) {
       }),
     });
 
-    // Overbought (70) / oversold (30) reference lines
     rsiSeriesRef.current.createPriceLine({ price: 70, color: '#ef5350', lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: '70' });
     rsiSeriesRef.current.createPriceLine({ price: 50, color: '#555e72', lineWidth: 1, lineStyle: LineStyle.Dotted,  axisLabelVisible: false });
     rsiSeriesRef.current.createPriceLine({ price: 30, color: '#26a69a', lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: '30' });
@@ -70,7 +68,8 @@ export default function RSIPanel({ height = 100 }) {
     chartRef.current = chart;
 
     const ro = new ResizeObserver(() => {
-      chart.applyOptions({ width: containerRef.current.clientWidth });
+      if (containerRef.current)
+        chart.applyOptions({ width: containerRef.current.clientWidth });
     });
     ro.observe(containerRef.current);
 

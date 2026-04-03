@@ -1,10 +1,10 @@
 /**
- * MACDPanel — MACD line, signal line, and histogram sub-chart.
- * Rendered only when panels.macd is true.
+ * MACDPanel — MACD line, signal line, histogram.
+ * lightweight-charts v4: addSeries(LineSeries/HistogramSeries, opts)
  */
 
 import { useEffect, useRef } from 'react';
-import { createChart } from 'lightweight-charts';
+import { createChart, LineSeries, HistogramSeries } from 'lightweight-charts';
 import { useIndicators } from '../../hooks/useIndicators';
 
 const CHART_OPTS = {
@@ -30,11 +30,11 @@ const CHART_OPTS = {
 };
 
 export default function MACDPanel({ height = 110 }) {
-  const containerRef   = useRef(null);
-  const chartRef       = useRef(null);
-  const histRef        = useRef(null);
-  const macdLineRef    = useRef(null);
-  const signalLineRef  = useRef(null);
+  const containerRef  = useRef(null);
+  const chartRef      = useRef(null);
+  const histRef       = useRef(null);
+  const macdLineRef   = useRef(null);
+  const signalLineRef = useRef(null);
 
   const { macdData } = useIndicators();
 
@@ -47,22 +47,20 @@ export default function MACDPanel({ height = 110 }) {
       height,
     });
 
-    // Histogram (behind lines)
-    histRef.current = chart.addHistogramSeries({
+    // v4: addSeries(HistogramSeries/LineSeries, opts)
+    histRef.current = chart.addSeries(HistogramSeries, {
       priceLineVisible: false,
       lastValueVisible: false,
     });
 
-    // MACD line
-    macdLineRef.current = chart.addLineSeries({
+    macdLineRef.current = chart.addSeries(LineSeries, {
       color:            '#4e9ff2',
       lineWidth:        2,
       priceLineVisible: false,
       lastValueVisible: true,
     });
 
-    // Signal line
-    signalLineRef.current = chart.addLineSeries({
+    signalLineRef.current = chart.addSeries(LineSeries, {
       color:            '#f06292',
       lineWidth:        2,
       priceLineVisible: false,
@@ -72,7 +70,8 @@ export default function MACDPanel({ height = 110 }) {
     chartRef.current = chart;
 
     const ro = new ResizeObserver(() => {
-      chart.applyOptions({ width: containerRef.current.clientWidth });
+      if (containerRef.current)
+        chart.applyOptions({ width: containerRef.current.clientWidth });
     });
     ro.observe(containerRef.current);
 

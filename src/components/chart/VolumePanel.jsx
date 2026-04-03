@@ -1,10 +1,10 @@
 /**
- * VolumePanel — standalone histogram sub-chart synced to the main chart timeScale.
- * Rendered only when panels.volume is true.
+ * VolumePanel — volume histogram sub-chart.
+ * lightweight-charts v4: addSeries(HistogramSeries, opts)
  */
 
 import { useEffect, useRef } from 'react';
-import { createChart } from 'lightweight-charts';
+import { createChart, HistogramSeries } from 'lightweight-charts';
 import { useChartStore } from '../../store/chartStore';
 
 const CHART_OPTS = {
@@ -17,7 +17,7 @@ const CHART_OPTS = {
     horzLines: { color: '#1a1d2e' },
   },
   rightPriceScale: {
-    borderColor: '#2a2d3e',
+    borderColor:  '#2a2d3e',
     scaleMargins: { top: 0.1, bottom: 0 },
   },
   timeScale: {
@@ -25,7 +25,7 @@ const CHART_OPTS = {
     timeVisible:    true,
     secondsVisible: false,
   },
-  handleScale: false,
+  handleScale:  false,
   handleScroll: false,
 };
 
@@ -45,15 +45,17 @@ export default function VolumePanel({ height = 100 }) {
       height,
     });
 
-    seriesRef.current = chart.addHistogramSeries({
-      priceFormat:    { type: 'volume' },
-      priceScaleId:   '',
+    // v4: addSeries(HistogramSeries, opts)
+    seriesRef.current = chart.addSeries(HistogramSeries, {
+      priceFormat:  { type: 'volume' },
+      priceScaleId: '',
     });
 
     chartRef.current = chart;
 
     const ro = new ResizeObserver(() => {
-      chart.applyOptions({ width: containerRef.current.clientWidth });
+      if (containerRef.current)
+        chart.applyOptions({ width: containerRef.current.clientWidth });
     });
     ro.observe(containerRef.current);
 
